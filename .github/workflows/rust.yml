@@ -32,9 +32,9 @@ jobs:
 
     steps:
       - name: Set up Rust stable
-        uses: actions/setup-rust@v1
+        uses: actions-rs/toolchain@v1
         with:
-          rust-version: stable
+          toolchain: stable
 
       - name: Install PostgreSQL client
         run: sudo apt-get install -y postgresql-client
