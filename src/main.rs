@@ -1,25 +1,22 @@
-mod handler;
-mod model;
-mod schema;
-
 use actix_cors::Cors;
 use actix_web::middleware::Logger;
 use actix_web::{http::header, web, App, HttpServer};
 use dotenv::dotenv;
 use sqlx::{postgres::PgPoolOptions, Pool, Postgres};
+
+mod handler;
+mod model;
+mod schema;
+
 pub struct AppState {
     db: Pool<Postgres>,
 }
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    if std::env::var_os("RUST_LOG").is_none() {
-        std::env::set_var("RUST_LOG", "actix_web=info");
-    }
+    env_logger::init_from_env(env_logger::Env::default().default_filter_or("info"));
 
     dotenv().ok();
-
-    env_logger::init();
 
     let database_url = std::env::var("DATABASE_URL").expect("DATABASE_URL must be set");
     let pool = match PgPoolOptions::new()
@@ -37,7 +34,7 @@ async fn main() -> std::io::Result<()> {
         }
     };
 
-    println!("Server started successfully!");
+    log::info!("starting HTTP server at http://localhost:8000");
 
     HttpServer::new(move || {
         let cors = Cors::default()

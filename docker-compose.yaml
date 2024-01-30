@@ -1,16 +1,6 @@
 version: '3'
+
 services:
-  api:
-    image: rust-postgres-crud-sqlx
-    env_file:
-      - ./.env
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - '3000:3000'
-    depends_on:
-      - postgres
   postgres:
     image: postgres:latest
     restart: always
@@ -21,5 +11,6 @@ services:
       - progresDB:/data/postgres
     env_file:
       - ./.env
+
 volumes:
   progresDB:

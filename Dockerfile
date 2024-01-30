@@ -1,16 +1,13 @@
-FROM messense/rust-musl-cross:x86_64-musl AS builder
-
-ENV SQLX_OFFLINE=true
-
-WORKDIR /rust-api-deployment-example
-
+# Build stage
+FROM rust:bookworm AS builder
+ 
+WORKDIR /app
 COPY . .
-
-RUN cargo build --release --target x86_64-unknown-linux-musl
-
-
-FROM scratch
-COPY --from=builder /rust-api-deployment-example/target/x86_64-unknown-linux-musl/release/rust-api-deployment-example /rust-api-deployment-example
-ENTRYPOINT ["/rust-api-deployment-example"]
-
-EXPOSE 3000
+RUN cargo build --release
+ 
+# Final run stage
+FROM debian:bookworm-slim AS runner
+ 
+WORKDIR /app
+COPY --from=builder /app/target/release/example-rust /app/example-rust
+CMD ["/app/example-rust"]
